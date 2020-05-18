@@ -9,12 +9,16 @@ public class Target : MonoBehaviour
     private EventManager eventManager;
     [SerializeField] private ParticleSystem explodeParticle;
 
+    public bool isActive;
+
     // Start is called before the first frame update
     void Start()
     {
         eventManager = GameObject.Find("EventManager").GetComponent<EventManager>();
 
         targetRB = GetComponent<Rigidbody>();
+
+        isActive = true;
 
         //randomly select launch location
         transform.position = new Vector3(Random.Range(-5,5),-5, 0);
@@ -33,24 +37,42 @@ public class Target : MonoBehaviour
         
     }
 
+
     private void OnMouseDown()
     {
-        Instantiate(explodeParticle, transform.position, Quaternion.identity);
-        if (CompareTag("bad"))
-        {     
-           eventManager.targetDestoryed?.Invoke(-7);
-                 
-        } else if (CompareTag("good"))
+        if (isActive)
         {
-        
-            eventManager.targetDestoryed?.Invoke(7);
+            Instantiate(explodeParticle, transform.position, Quaternion.identity);
+            if (CompareTag("bad"))
+            {
+                eventManager.targetDestoryed?.Invoke(-7);
+
+            }
+            else if (CompareTag("good"))
+            {
+
+                eventManager.targetDestoryed?.Invoke(7);
+            }
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
+        
+    }
+
+    public void Deactiveate()
+    {
+        isActive = false;
+        Debug.Log("Deactivated target " + gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         Destroy(gameObject);
+
+        if (CompareTag("good"))
+        {
+            eventManager.gameOverEvent?.Invoke();
+        }
+        
     }
 
 
