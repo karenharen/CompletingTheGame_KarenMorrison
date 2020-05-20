@@ -61,7 +61,7 @@ public class Target : MonoBehaviour
     public void Deactiveate()
     {
         isActive = false;
-        Debug.Log("Deactivated target " + gameObject);
+       
     }
 
     private void OnTriggerEnter(Collider other)

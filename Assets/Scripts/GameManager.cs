@@ -12,15 +12,34 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public Button restartButton;
     public bool isGameRunning;
+    public GameObject titleScreen;
+
+    class SpawnRate
+    {
+        private float baseRate;
+        private int difficulty;
+
+       public SpawnRate (int diff)
+        {
+            baseRate = 1.0f;
+            difficulty = diff;
+        }
+
+        public float GetRate()
+        {
+            return baseRate / difficulty;
+        }
+
+    }
+
+    private SpawnRate spawnRate;
 
     private int score = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        isGameRunning = true;
-        StartCoroutine(spawnTargets());
-        UpdateScore(0);
+  
     }
 
     // Update is called once per frame
@@ -33,7 +52,7 @@ public class GameManager : MonoBehaviour
     {
         while (isGameRunning)
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(spawnRate.GetRate());
             int targetIndex = Random.Range(0, targets.Count);
             Instantiate(targets[targetIndex]);
         }
@@ -66,5 +85,15 @@ public class GameManager : MonoBehaviour
     public void restartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StartGame(int difficulty)
+    {
+        spawnRate = new SpawnRate(difficulty);
+        Debug.Log("Spawn Rate is set to " + spawnRate.GetRate());
+        titleScreen.gameObject.SetActive(false);
+        isGameRunning = true;
+        StartCoroutine(spawnTargets());
+        UpdateScore(0);
     }
 }

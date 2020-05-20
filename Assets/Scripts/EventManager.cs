@@ -10,4 +10,7 @@ public class EventManager : MonoBehaviour
 
 
     public UnityEvent gameOverEvent;
+
+    [System.Serializable] public class StartGameEvent: UnityEvent<int> { }
+    public StartGameEvent setDifficultyStartEvent;
 }
